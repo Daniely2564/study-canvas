@@ -79,7 +79,7 @@ window.addEventListener("keydown", (event) => {
       break;
     case "Space":
       drawables.forEach((drawable: any) => {
-        drawable.setJumpStarted();
+        drawable.jump();
       });
       break;
   }

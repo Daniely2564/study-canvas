@@ -7,6 +7,8 @@ interface MarioProps {
   y: number;
 }
 
+const GRAVITY = 9.8;
+
 class Mario implements Drawable {
   props: MarioProps;
   context: CanvasRenderingContext2D;
@@ -14,11 +16,8 @@ class Mario implements Drawable {
   img: HTMLImageElement;
   ready: boolean;
   resolution: { width: number; height: number };
-  jumpMax = 30;
-  jumpSpeed = 9;
-  jumpIdx = 0;
-  calculatedJumps: number[];
-  jumpStarted = false;
+  jumpIdx: number;
+  jumpForce: number;
 
   constructor(
     props: MarioProps,
@@ -28,25 +27,23 @@ class Mario implements Drawable {
     this.props = props;
     this.context = context;
     this.ready = false;
+    this.resolution = resolution;
+    this.jumpIdx = -1;
+    this.jumpForce = 90;
+
     this.img = new Image();
-    console.log(this.img);
     this.img.src = "./src/mario.png";
     this.img.onload = () => {
       this.ready = true;
     };
-    this.resolution = resolution;
-    this.calculatedJumps = this.calculateJump();
-    console.log(this.calculatedJumps);
+
     this.draw();
   }
 
   draw() {
     if (this.ready) {
       this.props.x += this.speed.x;
-      this.props.y += this.speed.y;
-      if (this.jumpStarted) {
-        this.jump();
-      }
+      this.props.y += this._calculateY();
       this.preventOutOfBounds();
       this.context.drawImage(
         this.img,
@@ -58,10 +55,6 @@ class Mario implements Drawable {
     }
   }
 
-  setJumpStarted() {
-    this.jumpStarted = true;
-  }
-
   setSpeed(speed: { x: number; y: number }): void {
     this.speed = {
       x: this.speed.x + speed.x,
@@ -69,28 +62,29 @@ class Mario implements Drawable {
     };
   }
 
-  isOnGround() {
-    return this.props.y + this.props.height >= this.resolution.height;
-  }
-
-  calculateJump() {
-    const arr = [];
-    for (let i = 0; i <= this.jumpSpeed; i++) {
-      arr.push(1 - i / this.jumpSpeed);
+  _calculateY() {
+    if (this.jumpIdx < 1) {
+      return 0;
     }
-    for (let i = 0; i <= this.jumpSpeed; i++) {
-      arr.push(0 - i / this.jumpSpeed);
+    if (this.isOnGround() && this.jumpIdx > 2) {
+      this.jumpIdx = -1;
+      return 0;
     }
-    return arr;
+    const expectedHeight =
+      (this.jumpForce * this.jumpIdx) / 20 -
+      (GRAVITY * 0.5 * this.jumpIdx * this.jumpIdx) / 20;
+    this.jumpIdx++;
+    return expectedHeight * -1;
   }
 
   jump() {
-    this.jumpIdx = (this.jumpIdx + 1) % this.calculatedJumps.length;
-    if (this.jumpIdx === 0) {
-      this.jumpStarted = false;
-      this.speed.y = 0;
+    if (this.jumpIdx === -1) {
+      this.jumpIdx = 1;
     }
-    this.speed.y = this.calculatedJumps[this.jumpIdx] * this.jumpMax;
+  }
+
+  isOnGround() {
+    return this.props.y + this.props.height >= this.resolution.height;
   }
 
   preventOutOfBounds() {
