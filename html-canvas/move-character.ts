@@ -1,30 +1,24 @@
 import Component from "./src/component";
 import { Drawable } from "./src/drawable";
-import Mario from "./src/mario";
 
 let context: CanvasRenderingContext2D | null = null;
 let timer: number = 0;
 const drawables: Drawable[] = [];
 
-const resolution = {
-  width: 800,
-  height: 800,
-};
-
 function startGame() {
   const myCanvas = document.getElementById("my-canvas") as HTMLCanvasElement;
-  myCanvas.width = resolution.width;
-  myCanvas.height = resolution.height;
+  myCanvas.width = 800;
+  myCanvas.height = 800;
   context = myCanvas.getContext("2d");
   drawables.push(
-    new Mario(
+    new Component(
       {
         width: 30,
         height: 30,
-        x: 50,
-        y: 800 - 30,
+        color: "green",
+        x: 350,
+        y: 350,
       },
-      resolution,
       context!
     )
   );
@@ -64,7 +58,7 @@ function onRightClick() {
 }
 
 window.addEventListener("keydown", (event) => {
-  switch (event.code) {
+  switch (event.key) {
     case "ArrowUp":
       onupclick();
       break;
@@ -76,11 +70,6 @@ window.addEventListener("keydown", (event) => {
       break;
     case "ArrowRight":
       onRightClick();
-      break;
-    case "Space":
-      drawables.forEach((drawable: any) => {
-        drawable.setJumpStarted();
-      });
       break;
   }
 });
