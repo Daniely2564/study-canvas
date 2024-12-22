@@ -1,13 +1,13 @@
 let context;
-
-const mario = new Mario(100, 800 - 70, 0, 0, 50, 70);
+const frame = { width: 800, height: 800 };
+const mario = new Mario(100, frame.height - 70, 0, 0, 50, 70, frame);
 const obstacle = new Component(400, 0, -1, 0, 10, 200, "red");
 const obstacle2 = new Component(800, 600, -2, 0, 10, 200, "red");
 
 function startGame() {
   const canvas = document.getElementById("my-canvas");
-  canvas.width = 800;
-  canvas.height = 800;
+  canvas.width = frame.width;
+  canvas.height = frame.height;
   context = canvas.getContext("2d");
   render();
 }

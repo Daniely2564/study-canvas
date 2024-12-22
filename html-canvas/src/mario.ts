@@ -7,7 +7,7 @@ interface MarioProps {
   y: number;
 }
 
-const GRAVITY = 9.8;
+const GRAVITY = 9.45;
 
 class Mario implements Drawable {
   props: MarioProps;
