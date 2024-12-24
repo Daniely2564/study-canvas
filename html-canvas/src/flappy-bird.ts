@@ -24,6 +24,19 @@ let isGameOver = false;
 document.addEventListener("keydown", () => (bird.velocity = bird.lift));
 document.addEventListener("mousedown", () => (bird.velocity = bird.lift));
 
+const flappyBirdImgs: HTMLImageElement[] = [];
+
+flappyBirdImgs.push(new Image());
+flappyBirdImgs.push(new Image());
+flappyBirdImgs.push(new Image());
+flappyBirdImgs.push(new Image());
+
+for (let i = 0; i < 4; i++) {
+  flappyBirdImgs[i].src = `/imgs/flappy_${i}.png`;
+}
+
+let birdIdx = 0;
+
 // Game Loop
 function gameLoop() {
   if (isGameOver) return gameOver();
@@ -31,8 +44,15 @@ function gameLoop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   // Draw Bird
-  ctx.fillStyle = "yellow";
-  ctx.fillRect(bird.x, bird.y, bird.width, bird.height);
+  ctx.drawImage(
+    flappyBirdImgs[birdIdx],
+    bird.x,
+    bird.y,
+    bird.width,
+    bird.height
+  );
+
+  birdIdx = (birdIdx + 1) % 4;
 
   // Gravity and Movement
   bird.velocity += bird.gravity;
